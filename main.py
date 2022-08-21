@@ -1,20 +1,10 @@
-from ast import Global, Lambda
-from functools import partial
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
+from tkinter import messagebox
+from tkinter import font
 
 dicCursos = {}
-
-with open("Pruebap.lfp", "r", encoding="utf-8") as archivo:
-
-#FOR PARA CREAR DICCIONARIO DESDE ARCHIVO
-    for linea in archivo:
-        linea = linea.rstrip("\n")
-        campos = linea.split(",")
-        valores = [campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]]
-        dicCursos[campos[0]]=valores
-
-
 
  #######################METODO PARA LA SUMATORIA DE CRÉDITOS################################   
 def sumaCredito():
@@ -27,8 +17,7 @@ def sumaCredito():
         print("total de créditos: " + str(sumaCredito))
         return sumaCredito
 
-sumaCredito()
-print(dicCursos)
+#sumaCredito()
 
 '''MENU PRINCIPAL / PANTALLA 1'''
 class MenuPrincipal():
@@ -57,14 +46,28 @@ class MenuPrincipal():
         Label(self.frame, text="Lusvin Alexander Sicajá Ramírez", font=('Segoe UI',10), fg='#FDFEFE', bg='#00747C', width=50).place(x=250, y=120, anchor="center")
         Label(self.frame, text="Carnet: 201602630", font=('Segoe UI',10), fg='#FDFEFE', bg='#00747C', width=20).place(x=250, y=140, anchor="center")
         Label(self.frame, text="", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=69, height=18).place(x=250, y=340, anchor="center")
-        Button(self.frame, text="Cargar Archivo", command=self.IrPantalla2 , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=125, y=300, anchor="center")
+        Button(self.frame, text="Cargar Archivo", command=self.cargarArchivo , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=125, y=300, anchor="center")
         Button(self.frame, text="Gestionar Cursos", command=self.btnGestionar , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=375, y=300, anchor="center")
         Button(self.frame, text="Conteo de Créditos", command=self.btnConteo , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=125, y=400, anchor="center")
-        Button(self.frame, text="Salir", command=self.IrPantalla2 , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=375, y=400, anchor="center")
+        Button(self.frame, text="Salir", command=self.salir , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=20).place(x=375, y=400, anchor="center")
         
         self.frame.mainloop()
     
-    def IrPantalla2(self):
+    def cargarArchivo(self):
+        nombreArchivo = filedialog.askopenfilename(initialdir="/", title="Seleccione archivo de Cursos", filetypes=(("archivo lfp", "*.lfp"),))
+        if nombreArchivo!='':
+            with open(nombreArchivo, "r", encoding="utf-8") as archivo:
+            #FOR PARA CREAR DICCIONARIO DESDE ARCHIVO
+                for linea in archivo:
+                    linea = linea.rstrip("\n")
+                    campos = linea.split(",")
+                    valores = [campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]]
+                    dicCursos[campos[0]]=valores
+            messagebox.showinfo(message="El archivo se cargo correctamente", title="Carga de archivo")
+        else:
+            messagebox.showinfo(message="El archivo NO se cargo correctamente \n Intente nuevamente", title="Carga de archivo")
+
+    def salir(self):
         self.ventana.destroy()
         
     def btnGestionar(self):
@@ -196,6 +199,7 @@ class ListarCursos():
         self.ventana.configure(bg='#202022')
         self.VentanaFrame()
 
+
     def Centrar(self, r, ancho, alto):
         altura_pantalla = r.winfo_screenheight()
         ancho_pantalla = r.winfo_screenwidth()
@@ -210,8 +214,45 @@ class ListarCursos():
         
         Label(self.frame, text="Listado Cursos - Facultad de Ingeniería", font=('Segoe UI',15), fg='#00747C', bg='#202022', width=60).place(x=250, y=20, anchor="center")
         
+        tabla = ttk.Treeview(self.frame, columns=("col1","col2", "col3", "col4", "col5", "col6"))
+        tabla.place(x=250, y=160, anchor="center")
+        
+        style = ttk.Style()
+        style.configure(
+            'Treeview',
+            background = 'white',
+            foreground = '#202022',
+            rowheight = 20,
+            fielbackground = 'silver'
+        )
+        style.map(
+            'Treeview',
+            background = [('selected', '#00747C')]
+        )
+        
+        tabla.column("#0",width=55)
+        tabla.column("col1",width=110, anchor=CENTER)
+        tabla.column("col2",width=80, anchor=CENTER)
+        tabla.column("col3",width=60, anchor=CENTER)
+        tabla.column("col4",width=60, anchor=CENTER)
+        tabla.column("col5",width=60, anchor=CENTER)
+        tabla.column("col6",width=50, anchor=CENTER)
+
+        tabla.heading("#0", text="Codigo", anchor=CENTER)
+        tabla.heading("col1", text="Nombre de Curso", anchor=CENTER)
+        tabla.heading("col2", text="Pre-Requisito", anchor=CENTER)
+        tabla.heading("col3", text="Opcional", anchor=CENTER)
+        tabla.heading("col4", text="Semestre", anchor=CENTER)
+        tabla.heading("col5", text="Créditos", anchor=CENTER)
+        tabla.heading("col6", text="Estado", anchor=CENTER)
+        
+        for c in dicCursos:
+            valores = dicCursos[c]
+            tabla.insert("",END,text=c, values=(valores[0], valores[1], valores[2], valores[3], valores[4], valores[5]))
+
         Button(self.frame, text="Regresar", command=self.btnsalir , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=435, y=360, anchor="center")
         self.frame.mainloop()
+        
     
     def btnsalir(self):
         self.ventana.destroy()
@@ -243,8 +284,6 @@ class CrearCurso():
             valoresInd = [nombreValor.get(), requisitoValor.get(), opcionalValor.get(), semestreValor.get(), creditosValor.get(), estadoValor.get()]  
             dicCursos[codigoValor.get()] = valoresInd  
             print("agregando curso")
-            print(codigoValor.get())
-            print(nombreValor.get())
             self.btnsalir()            
         
         self.frame = Frame(height=390, width=500)
@@ -425,5 +464,6 @@ class EliminarCurso():
 
 #CrearCurso()
 MenuPrincipal()
+print(dicCursos)
 
     
