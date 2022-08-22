@@ -3,23 +3,13 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import font
+from turtle import width
 
 dicCursos = {}
 
- #######################METODO PARA LA SUMATORIA DE CRÉDITOS################################   
-def sumaCredito():
-        sumaCredito = 0  
-        for i in dicCursos.values():
-            if(i[5]=="0"):
-                sumaCredito += int(i[4])
-            else:
-                print("el curso: " + i[0] + " no tiene créditos")  
-        print("total de créditos: " + str(sumaCredito))
-        return sumaCredito
 
-#sumaCredito()
 
-'''MENU PRINCIPAL / PANTALLA 1'''
+'''MENU PRINCIPAL / PANTALLA 1 ++++++++++++++++++++++++++++++++++++++'''
 class MenuPrincipal():
     def __init__(self) -> None:
         self.ventana = Tk()
@@ -161,21 +151,88 @@ class CursosConteo():
         Label(self.frame, text="Conteo de Cursos - Facultad de Ingeniería", font=('Segoe UI',15), fg='#FDFEFE', bg='#00747C', width=50).place(x=250, y=48, anchor="center")
         Label(self.frame, text="", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=69, height=25).place(x=250, y=280, anchor="center")
         
+         #######################METODO PARA LA SUMATORIA DE CRÉDITOS################################    
+        def sumaCredito():
+            sumaCredito = 0  
+            for i in dicCursos.values():
+                if(i[5]=="0"):
+                    sumaCredito += int(i[4])
+                else:
+                   print("el curso: " + i[0] + " no tiene créditos")  
+            #print("total de créditos: " + str(sumaCredito))
+            
+            sumaAprobado = 0
+            for j in dicCursos.values():
+                if(j[5]=="1"):
+                    sumaAprobado += int(j[4])
+                else:
+                    print("nada")
+            
+            sumaPendiente = 0
+            for k in dicCursos.values():
+                if(k[5]=="-1" and k[2]=="1"):
+                    sumaPendiente += int(k[4])
+                else:
+                    print("nada")
+
+            Label(self.frame, text=sumaCredito, font=('Segoe UI',12), fg='#202022', bg='#00747C', width=5).place(x=250, y=100, anchor="center")
+            Label(self.frame, text=sumaAprobado, font=('Segoe UI',12), fg='#202022', bg='#00747C', width=5).place(x=250, y=130, anchor="center")
+            Label(self.frame, text=sumaPendiente, font=('Segoe UI',12), fg='#202022', bg='#00747C', width=5).place(x=250, y=160, anchor="center")
+
+        Button(self.frame, text="Contar", command=sumaCredito , font=('Segoe UI',10), fg='#000000', bg='#CACACA', width=8).place(x=400, y=100, anchor="center")
+
         Label(self.frame, text="Créditos Aprobados: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=30).place(x=150, y=100, anchor="center")
         Label(self.frame, text="Créditos Cursando: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=30).place(x=150, y=130, anchor="center")
         Label(self.frame, text="Créditos Pendientes: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=30).place(x=150, y=160, anchor="center")
-              
+        
+        
+     
         Label(self.frame, text="_________________________________________________________________________________________", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=60).place(x=250, y=180, anchor="center")
         Label(self.frame, text="Créditos Obligatorios hasta el semestre seleccionado: ", font=('Segoe UI',12), fg='#FDFEFE', bg='#202022', width=50).place(x=250, y=210, anchor="center")
+        
+        semestreSelect = IntVar()
+        semestreSelect.set("No.")
+        numeroSemestre=[1,2,3,4,5,6,7,8,9,10]
+        dropcodigo = OptionMenu(self.frame, semestreSelect, *numeroSemestre).place(x=182, y=226)
+
+        def creditoN():
+            print(semestreSelect)
+            sumaCreditoN = 0  
+            for l in dicCursos.values():
+                obli=int(l[3])
+                if(l[2]=="1"):
+                    if(obli<=semestreSelect.get()):
+                        sumaCreditoN += int(l[4])
+                else:
+                    print("el curso: " + l[0] + "no es obligado")  
+            Label(self.frame, text=sumaCreditoN, font=('Segoe UI',12), fg='#202022', bg='#00747C', width=5).place(x=450, y=240, anchor="center")
+        
         Label(self.frame, text="Seleccione Semestre...", font=('Segoe UI',10), fg='#FDFEFE', bg='#00BBC9', width=20).place(x=100, y=240, anchor="center")
         Label(self.frame, text="Créditos:", font=('Segoe UI',10), fg='#FDFEFE', bg='#00BBC9', width=10).place(x=380, y=240, anchor="center")
-        Button(self.frame, text="Contar", command=self.conteos , font=('Segoe UI',10), fg='#000000', bg='#CACACA', width=8).place(x=290, y=242, anchor="center")
+        Button(self.frame, text="Contar", command=creditoN , font=('Segoe UI',10), fg='#000000', bg='#CACACA', width=8).place(x=290, y=242, anchor="center")
 
         Label(self.frame, text="_________________________________________________________________________________________", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=60).place(x=250, y=270, anchor="center")
         Label(self.frame, text="Créditos del semestre seleccionado: ", font=('Segoe UI',12), fg='#FDFEFE', bg='#202022', width=50).place(x=250, y=300, anchor="center")
+        
+        semestreSelect2 = IntVar()
+        semestreSelect2.set("No.")
+        numeroSemestre2=[1,2,3,4,5,6,7,8,9,10]
+        dropcodigo = OptionMenu(self.frame, semestreSelect2, *numeroSemestre2).place(x=182, y=320)
+
+        def creditoN2():
+            print(semestreSelect2)
+            sumaCreditoN2 = 0  
+            for l in dicCursos.values():
+                obli=int(l[3])
+                if(obli==semestreSelect2.get()):
+                    sumaCreditoN2 += int(l[4])
+                else:
+                    print("el curso: " + l[0] + "no es obligado")  
+            Label(self.frame, text=sumaCreditoN2, font=('Segoe UI',12), fg='#202022', bg='#00747C', width=5).place(x=450, y=330, anchor="center")
+
         Label(self.frame, text="Seleccione Semestre...", font=('Segoe UI',10), fg='#FDFEFE', bg='#00BBC9', width=20).place(x=100, y=330, anchor="center")
         Label(self.frame, text="Créditos:", font=('Segoe UI',10), fg='#FDFEFE', bg='#00BBC9', width=10).place(x=380, y=330, anchor="center")
-        Button(self.frame, text="Contar", command=self.conteos , font=('Segoe UI',10), fg='#000000', bg='#CACACA', width=8).place(x=290, y=332, anchor="center")
+        Button(self.frame, text="Contar", command=creditoN2 , font=('Segoe UI',10), fg='#000000', bg='#CACACA', width=8).place(x=290, y=332, anchor="center")
 
         Button(self.frame, text="Regresar al Menú Principal", command=self.btnMenuprincipal , font=('Segoe UI',15), fg='#000000', bg='#CACACA', width=30).place(x=250, y=420, anchor="center")
         
@@ -284,6 +341,7 @@ class CrearCurso():
             valoresInd = [nombreValor.get(), requisitoValor.get(), opcionalValor.get(), semestreValor.get(), creditosValor.get(), estadoValor.get()]  
             dicCursos[codigoValor.get()] = valoresInd  
             print("agregando curso")
+            messagebox.showinfo(message="El curso se guardo correctamente", title="Curso Creado")
             self.btnsalir()            
         
         self.frame = Frame(height=390, width=500)
@@ -351,9 +409,7 @@ class EditarCurso():
         def btnAgregar():
             valoresInd = [nombreValor.get(), requisitoValor.get(), opcionalValor.get(), semestreValor.get(), creditosValor.get(), estadoValor.get()]  
             dicCursos[codigoValor.get()] = valoresInd  
-            print("agregando curso")
-            print(codigoValor.get())
-            print(nombreValor.get())
+            messagebox.showinfo(message="Se edito el curso correctamente", title="Curso Editado")
             self.btnsalir()            
         
         self.frame = Frame(height=390, width=500)
@@ -371,6 +427,7 @@ class EditarCurso():
         Label(self.frame, text="Estado: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=20).place(x=72, y=300, anchor="center")
         
         codigoValor = StringVar()
+        codigoValor.set("Seleccione un curso...")
         nombreValor = StringVar()
         requisitoValor = StringVar()
         semestreValor = StringVar()
@@ -378,8 +435,10 @@ class EditarCurso():
         creditosValor = StringVar()
         estadoValor = StringVar()
         #e = Entry(self.frame, textvariable=codigoValor, text="codigo", font=('Segoe UI',10), fg='#000000', width=40 ).place(x=300, y=60, anchor="center")
-
-        boxCodigo= Entry(self.frame, textvariable=codigoValor, font=('Segoe UI',10), fg='#000000', width=40).place(x=300, y=60, anchor="center")
+        codigos=list(dicCursos.keys())
+        
+        dropcodigo = OptionMenu(self.frame, codigoValor, *codigos).place(x=200, y=50)
+        #boxCodigo= Entry(self.frame, textvariable=codigoValor, font=('Segoe UI',10), fg='#000000', width=40).place(x=300, y=60, anchor="center")
         boxNombre = Entry(self.frame, textvariable=nombreValor, font=('Segoe UI',10), fg='#000000', width=40 ).place(x=300, y=100, anchor="center")
         boxRequisito = Entry(self.frame, textvariable=requisitoValor, font=('Segoe UI',10), fg='#000000', width=40 ).place(x=300, y=140, anchor="center")
         boxSemestre = Entry(self.frame, textvariable=semestreValor, font=('Segoe UI',10), fg='#000000', width=40 ).place(x=300, y=180, anchor="center")
@@ -388,7 +447,7 @@ class EditarCurso():
         boxEstado = Entry(self.frame, textvariable=estadoValor, font=('Segoe UI',10), fg='#000000', width=40 ).place(x=300, y=300, anchor="center")
 
         Button(self.frame, text="Cancelar", command=self.btnsalir , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=435, y=360, anchor="center")
-        Button(self.frame, text="Agregar", command=btnAgregar, font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=300, y=360, anchor="center")
+        Button(self.frame, text="Editar", command=btnAgregar, font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=300, y=360, anchor="center")
   
         self.frame.mainloop()
 
@@ -422,7 +481,21 @@ class MostrarCurso():
         
         Label(self.frame, text="Curso - Facultad de Ingeniería", font=('Segoe UI',15), fg='#00747C', bg='#202022', width=60).place(x=250, y=20, anchor="center")
         
+        Label(self.frame, text="Código: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=20).place(x=72, y=60, anchor="center")
+
+        codigoValor = StringVar()
+        codigoValor.set("Seleccione un curso...")
+        codigos=list(dicCursos.keys())
+        dropcodigo = OptionMenu(self.frame, codigoValor, *codigos).place(x=160, y=45)
+
+        def btnbuscar():
+            cb=dicCursos[codigoValor.get()]
+            cursitoB="Nombre: "+cb[0]+"\t Pre-requisito: "+cb[1]+"\n Semestre: "+cb[3]+"\t\t Opcional: "+cb[2]+"\n estado: "+cb[5]+"\t\t Créditos: "+cb[4]
+            Label(self.frame, text=cursitoB, font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=60).place(x=250, y=110, anchor="center")
+
+        Button(self.frame, text="Buscar", command=btnbuscar , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=420, y=60, anchor="center")
         Button(self.frame, text="Regresar", command=self.btnsalir , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=420, y=160, anchor="center")
+        
         self.frame.mainloop()
     
     def btnsalir(self):
@@ -454,6 +527,22 @@ class EliminarCurso():
         
         Label(self.frame, text="Curso a Eliminar - Facultad de Ingeniería", font=('Segoe UI',15), fg='#00747C', bg='#202022', width=60).place(x=250, y=20, anchor="center")
         
+        Label(self.frame, text="Código: ", font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=20).place(x=72, y=60, anchor="center")
+
+        codigoValor = StringVar()
+        codigoValor.set("Seleccione un curso...")
+        codigos=list(dicCursos.keys())
+        dropcodigo = OptionMenu(self.frame, codigoValor, *codigos).place(x=160, y=45)
+
+        def btnEliminar():
+            cb=dicCursos[codigoValor.get()]
+            cursitoB="Nombre: "+cb[0]+"\t Pre-requisito: "+cb[1]+"\n Semestre: "+cb[3]+"\t\t Opcional: "+cb[2]+"\n estado: "+cb[5]+"\t\t Créditos: "+cb[4]
+            Label(self.frame, text=cursitoB, font=('Segoe UI',10), fg='#FDFEFE', bg='#202022', width=60).place(x=250, y=110, anchor="center")
+            del dicCursos[codigoValor.get()]
+            messagebox.showinfo(message="El curso mostrado se ha eliminado correctamente...", title="Curso Eliminado")
+
+        Button(self.frame, text="Eliminar", command=btnEliminar , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=420, y=60, anchor="center")
+
         Button(self.frame, text="Regresar", command=self.btnsalir , font=('Segoe UI',10), fg='#000000', bg='#878787', width=15).place(x=420, y=160, anchor="center")
         self.frame.mainloop()
     
@@ -461,9 +550,5 @@ class EliminarCurso():
         self.ventana.destroy()
         Cursos()
 
-
-#CrearCurso()
 MenuPrincipal()
-print(dicCursos)
-
     
